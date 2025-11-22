@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            font-family: 'Arial', sans-serif;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 48px;
+            text-shadow: 0 0 20px #FFD700;
+            margin-bottom: 20px;
+        }
+        canvas {
+            border: 5px solid #FFD700;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+        }
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #FFD700;
+        }
+        .controls {
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 32px;
+            }
+            canvas {
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+            }
+            .score {
+                font-size: 18px;
+            }
+            .controls {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Flappy Bird</h1>
+    <div class="score">Score: <span id="score">0</span> | High Score: <span id="highScore">0</span></div>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <button id="restartBtn" style="margin: 20px; padding: 10px 20px; font-size: 18px; display: none;">Restart</button>
+    <div style="margin-top: 20px;">
+        <button id="pauseBtn" style="padding: 10px 20px; font-size: 18px; margin-right: 10px;">Pause</button>
+        <button onclick="window.parent.postMessage('goHome', '*');" style="padding: 10px 20px; font-size: 18px; background: #ffd700; color: #000; border: none; border-radius: 5px; cursor: pointer;">홈으로</button>
+    </div>
+    <div class="controls">
+        Click or press space to flap.<br>
+        Avoid pipes and ground!
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('highScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(frequency, duration, type = 'sine', volume = 0.05) {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+            oscillator.type = type;
+            gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + duration);
+        }
+
+        let backgroundX = 0;
+
+        function drawBackground() {
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Clouds
+            ctx.fillStyle = '#FFF';
+            ctx.beginPath();
+            ctx.arc(backgroundX + 50, 50, 20, 0, Math.PI * 2);
+            ctx.arc(backgroundX + 70, 50, 25, 0, Math.PI * 2);
+            ctx.arc(backgroundX + 90, 50, 20, 0, Math.PI * 2);
+            ctx.fill();
+            backgroundX -= 0.3;
+            if (backgroundX < -150) backgroundX = canvas.width;
+        }
+
+        let bird = { x: 50, y: 300, velocity: 0 };
+        let pipes = [];
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('flappy_highScore')) || 0;
+        let gameRunning = false;
+        let gameStarted = false;
+        let paused = false;
+        const gravity = 0.4;
+        const jump = -8;
+
+        highScoreEl.textContent = highScore;
+
+        function drawBird() {
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(bird.x + 10, bird.y + 10, 10, 0, Math.PI * 2);
+            ctx.fill();
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(bird.x + 13, bird.y + 8, 2, 0, Math.PI * 2);
+            ctx.fill();
+            // Beak
+            ctx.fillStyle = '#FFA500';
+            ctx.beginPath();
+            ctx.moveTo(bird.x + 20, bird.y + 10);
+            ctx.lineTo(bird.x + 25, bird.y + 8);
+            ctx.lineTo(bird.x + 25, bird.y + 12);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                // Top pipe
+                let gradient = ctx.createLinearGradient(pipe.x, 0, pipe.x + 50, 0);
+                gradient.addColorStop(0, '#228B22');
+                gradient.addColorStop(1, '#32CD32');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(pipe.x, 0, 50, pipe.top);
+                // Bottom pipe
+                ctx.fillStyle = gradient;
+                ctx.fillRect(pipe.x, canvas.height - pipe.bottom, 50, pipe.bottom);
+                // Pipe caps
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(pipe.x - 5, pipe.top - 20, 60, 20);
+                ctx.fillRect(pipe.x - 5, canvas.height - pipe.bottom, 60, 20);
+            });
+        }
+
+        function updatePipes() {
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                const top = Math.random() * (canvas.height - 200) + 50;
+                const bottom = canvas.height - top - 150;
+                pipes.push({ x: canvas.width, top, bottom });
+            }
+
+            pipes.forEach(pipe => {
+                pipe.x -= 1.5;
+                if (pipe.x + 50 < 0) {
+                    pipes.shift();
+                    score++;
+                    scoreEl.textContent = score;
+                    playSound(800, 0.1, 'sine');
+                }
+            });
+        }
+
+        function checkCollision() {
+            // Ground and ceiling
+            if (bird.y + 15 > canvas.height || bird.y + 5 < 0) {
+                gameRunning = false;
+                playSound(200, 0.5, 'sawtooth');
+                updateHighScore();
+            }
+
+            pipes.forEach(pipe => {
+                // Bird box: x+5 to x+15, y+5 to y+15
+                if (bird.x + 5 < pipe.x + 50 && bird.x + 15 > pipe.x &&
+                    (bird.y + 5 < pipe.top || bird.y + 15 > canvas.height - pipe.bottom)) {
+                    gameRunning = false;
+                    playSound(200, 0.5, 'sawtooth');
+                    updateHighScore();
+                }
+            });
+        }
+
+        function updateHighScore() {
+            if (score > highScore) {
+                highScore = score;
+                highScoreEl.textContent = highScore;
+                localStorage.setItem('flappy_highScore', highScore);
+            }
+        }
+
+        function gameLoop() {
+            drawBackground();
+
+            if (!gameStarted) {
+                ctx.fillStyle = '#000';
+                ctx.font = '30px Arial';
+                ctx.fillText('Click to Start', canvas.width / 2 - 90, canvas.height / 2);
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            if (paused) {
+                ctx.fillStyle = '#000';
+                ctx.font = '30px Arial';
+                ctx.fillText('Paused', canvas.width / 2 - 50, canvas.height / 2);
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            if (!gameRunning) {
+                ctx.fillStyle = '#FF0000';
+                ctx.font = '30px Arial';
+                ctx.fillText('Game Over', canvas.width / 2 - 80, canvas.height / 2);
+                ctx.fillText('Score: ' + score, canvas.width / 2 - 60, canvas.height / 2 + 40);
+                restartBtn.style.display = 'block';
+                return;
+            }
+
+            bird.velocity += gravity;
+            bird.y += bird.velocity;
+
+            updatePipes();
+            drawPipes();
+            drawBird();
+            checkCollision();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function flap() {
+            if (!gameStarted) {
+                gameStarted = true;
+                gameRunning = true;
+            } else if (!gameRunning) {
+                // Restart
+                bird = { x: 50, y: 300, velocity: 0 };
+                pipes = [];
+                score = 0;
+                scoreEl.textContent = score;
+                gameRunning = true;
+                gameStarted = false;
+                restartBtn.style.display = 'none';
+            } else if (paused) {
+                // Do nothing
+            } else {
+                bird.velocity = jump;
+                playSound(600, 0.1, 'square');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                flap();
+            }
+        });
+
+        canvas.addEventListener('click', flap);
+
+        restartBtn.addEventListener('click', () => {
+            bird = { x: 50, y: 300, velocity: 0 };
+            pipes = [];
+            score = 0;
+            scoreEl.textContent = score;
+            gameRunning = true;
+            gameStarted = true;
+            restartBtn.style.display = 'none';
+            gameLoop();
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            paused = !paused;
+            pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\grokcoding\grok_project_21\flappy.html
