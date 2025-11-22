@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
 
 const games = [
@@ -10,9 +10,57 @@ const games = [
   { name: '2048', file: '2048', description: 'Combine numbers to reach 2048!' },
 ];
 
-function Menu() {
+function Settings({ isOpen, onClose, settings, updateSettings }) {
+  if (!isOpen) return null;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex flex-col items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-lg p-6 max-w-md w-full mx-4">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Settings</h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-gray-700">Sound Effects</label>
+            <button
+              onClick={() => updateSettings({ soundEnabled: !settings.soundEnabled })}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.soundEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+            >
+              <div className={`w-5 h-5 bg-white rounded-full transition-transform ${settings.soundEnabled ? 'translate-x-6' : 'translate-x-1'}`}></div>
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <label className="text-gray-700">Dark Theme</label>
+            <button
+              onClick={() => updateSettings({ darkTheme: !settings.darkTheme })}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.darkTheme ? 'bg-purple-500' : 'bg-gray-300'}`}
+            >
+              <div className={`w-5 h-5 bg-white rounded-full transition-transform ${settings.darkTheme ? 'translate-x-6' : 'translate-x-1'}`}></div>
+            </button>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Menu({ settings, updateSettings }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  return (
+    <div className={`min-h-screen ${settings.darkTheme ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500'} flex flex-col items-center justify-center p-4`}>
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={() => setSettingsOpen(true)}
+          className="bg-white bg-opacity-20 backdrop-blur-md text-white font-bold py-2 px-4 rounded hover:bg-opacity-30 transition-all duration-300"
+        >
+          ⚙️ Settings
+        </button>
+      </div>
       <h1 className="text-6xl font-bold text-white mb-8 text-center animate-pulse">
         🎮 Game Collection 🎮
       </h1>
@@ -33,11 +81,17 @@ function Menu() {
       <footer className="mt-8 text-gray-400 text-center">
         Built with React & Tailwind CSS
       </footer>
+      <Settings
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        updateSettings={updateSettings}
+      />
     </div>
   );
 }
 
-function Game() {
+function Game({ settings }) {
   const { gameName } = useParams();
   const navigate = useNavigate();
   const gameFile = `/${gameName}.html`;
@@ -52,8 +106,16 @@ function Game() {
     return () => window.removeEventListener('message', handleMessage);
   }, [navigate]);
 
+  useEffect(() => {
+    // Send settings to iframe when game loads
+    const iframe = document.querySelector('iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'settings', settings }, '*');
+    }
+  }, [settings]);
+
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
+    <div className={`min-h-screen ${settings.darkTheme ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center p-4`}>
       <div className="mb-4">
         <Link
           to="/"
@@ -72,11 +134,22 @@ function Game() {
 }
 
 function App() {
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem('gameSettings');
+    return saved ? JSON.parse(saved) : { soundEnabled: true, darkTheme: true };
+  });
+
+  const updateSettings = (newSettings) => {
+    const updated = { ...settings, ...newSettings };
+    setSettings(updated);
+    localStorage.setItem('gameSettings', JSON.stringify(updated));
+  };
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Menu />} />
-        <Route path="/game/:gameName" element={<Game />} />
+        <Route path="/" element={<Menu settings={settings} updateSettings={updateSettings} />} />
+        <Route path="/game/:gameName" element={<Game settings={settings} />} />
       </Routes>
     </Router>
   );

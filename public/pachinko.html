@@ -323,6 +323,7 @@
         let freeSpins = 0;
         let autoSpin = false;
         let paused = false;
+        let soundEnabled = true;
 
         // Initialize reels
         reels.forEach(reel => {
@@ -343,6 +344,7 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(frequency, duration, type = 'sine', volume = 0.1) {
+            if (!soundEnabled) return;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             oscillator.connect(gainNode);
@@ -355,7 +357,7 @@
         }
 
         function playBGM() {
-            if (bgmPlaying) return;
+            if (!soundEnabled || bgmPlaying) return;
             bgmPlaying = true;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -648,6 +650,13 @@
         document.getElementById('pauseBtn').addEventListener('click', () => {
             paused = !paused;
             document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
+        });
+
+        // Listen for settings from parent
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'settings') {
+                soundEnabled = e.data.settings.soundEnabled;
+            }
         });
     </script>
 </body>
