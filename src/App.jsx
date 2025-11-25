@@ -79,7 +79,7 @@ function Menu({ settings, updateSettings }) {
         ))}
       </div>
       <footer className="mt-8 text-gray-400 text-center">
-        Test Footer - Built with React & Tailwind CSS
+        Built with React & Tailwind CSS
       </footer>
       {settingsOpen && (
         <Settings
