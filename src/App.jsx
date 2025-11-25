@@ -81,12 +81,14 @@ function Menu({ settings, updateSettings }) {
       <footer className="mt-8 text-gray-400 text-center">
         Test Footer - Built with React & Tailwind CSS
       </footer>
-      <Settings
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        settings={settings}
-        updateSettings={updateSettings}
-      />
+      {settingsOpen && (
+        <Settings
+          isOpen={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          settings={settings}
+          updateSettings={updateSettings}
+        />
+      )}
     </div>
   );
 }
