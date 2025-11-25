@@ -115,18 +115,18 @@ function Game({ settings }) {
   }, [settings]);
 
   return (
-    <div className={`min-h-screen ${settings.darkTheme ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center p-4`}>
-      <div className="mb-4">
+    <div className={`min-h-screen ${settings.darkTheme ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center p-2 sm:p-4`}>
+      <div className="mb-2 sm:mb-4 w-full max-w-4xl">
         <Link
           to="/"
-          className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-2 px-4 rounded hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+          className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-2 px-4 rounded hover:from-blue-600 hover:to-purple-700 transition-all duration-300 text-sm sm:text-base"
         >
           ← Back to Menu
         </Link>
       </div>
       <iframe
         src={gameFile}
-        className="w-full max-w-4xl h-screen border-0"
+        className="w-full max-w-4xl h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] border-0 rounded-lg"
         title="Game"
       ></iframe>
     </div>

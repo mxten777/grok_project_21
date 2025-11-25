@@ -7,7 +7,7 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(135deg, #000000, #1a1a1a);
             font-family: 'Arial', sans-serif;
             color: #ffffff;
@@ -19,27 +19,40 @@
             min-height: 100vh;
         }
         .title {
-            font-size: 48px;
+            font-size: 32px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-shadow: 0 0 20px #ffd700, 0 0 40px #ff0000;
             animation: titleGlow 2s infinite alternate;
+        }
+        @media (min-width: 768px) {
+            .title {
+                font-size: 48px;
+                margin-bottom: 20px;
+            }
         }
         @keyframes titleGlow {
             0% { text-shadow: 0 0 20px #ffd700, 0 0 40px #ff0000; }
             100% { text-shadow: 0 0 30px #ffd700, 0 0 60px #ff0000; }
         }
         .machine {
-            width: 700px;
-            height: 800px;
+            width: 100%;
+            max-width: 700px;
+            height: 600px;
             background: linear-gradient(135deg, #1a1a1a, #2c2c2c, #4a4a4a);
-            border: 30px solid #ffd700;
+            border: 20px solid #ffd700;
             border-radius: 50px;
             box-shadow: 0 0 120px rgba(255, 215, 0, 1), inset 0 0 50px rgba(255, 215, 0, 0.5);
             position: relative;
             display: flex;
             flex-direction: column;
             animation: machineGlow 2s infinite alternate;
+        }
+        @media (min-width: 768px) {
+            .machine {
+                height: 800px;
+                border-width: 30px;
+            }
         }
         @keyframes machineGlow {
             0% { box-shadow: 0 0 100px rgba(255, 215, 0, 1), inset 0 0 40px rgba(255, 215, 0, 0.5); }

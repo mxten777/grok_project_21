@@ -7,7 +7,7 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(135deg, #000000, #1a1a1a, #2c2c2c);
             font-family: 'Arial', sans-serif;
             color: #ffffff;
@@ -17,37 +17,61 @@
             min-height: 100vh;
             animation: bgPulse 10s infinite alternate;
         }
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+        }
         @keyframes bgPulse {
             0% { background: linear-gradient(135deg, #000000, #1a1a1a, #2c2c2c); }
             100% { background: linear-gradient(135deg, #1a1a1a, #2c2c2c, #000000); }
         }
         h1 {
-            font-size: 48px;
+            font-size: 32px;
             text-shadow: 0 0 20px #ff4500, 0 0 40px #ff6347, 0 0 60px #ff1493;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             animation: titleGlow 3s infinite alternate;
+        }
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 48px;
+                margin-bottom: 20px;
+            }
         }
         @keyframes titleGlow {
             0% { text-shadow: 0 0 20px #ff4500, 0 0 40px #ff6347; }
             100% { text-shadow: 0 0 30px #ff4500, 0 0 50px #ff6347, 0 0 70px #ff1493; }
         }
         canvas {
-            border: 5px solid #ff4500;
+            border: 3px solid #ff4500;
             background: linear-gradient(45deg, #000, #111);
             box-shadow: 0 0 20px rgba(255, 69, 0, 0.5), inset 0 0 10px rgba(255, 69, 0, 0.2);
             animation: canvasGlow 2s infinite alternate;
+            max-width: 100%;
+            height: auto;
+        }
+        @media (min-width: 768px) {
+            canvas {
+                border-width: 5px;
+            }
         }
         @keyframes canvasGlow {
             0% { box-shadow: 0 0 20px rgba(255, 69, 0, 0.5), inset 0 0 10px rgba(255, 69, 0, 0.2); }
             100% { box-shadow: 0 0 30px rgba(255, 69, 0, 1), inset 0 0 15px rgba(255, 69, 0, 0.5); }
         }
         .score {
-            font-size: 24px;
-            margin: 20px 0;
+            font-size: 18px;
+            margin: 10px 0;
             text-shadow: 0 0 10px #ff4500;
         }
+        @media (min-width: 768px) {
+            .score {
+                font-size: 24px;
+                margin: 20px 0;
+            }
+        }
         .controls {
-            font-size: 18px;
+            font-size: 14px;
             text-align: center;
             margin-top: 20px;
         }

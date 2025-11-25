@@ -1,136 +1,136 @@
-# Game Collection Menu
+# 게임 컬렉션 메뉴
 
-A modern web application featuring a collection of 6 classic HTML5 games with a React + Tailwind CSS menu interface.
+React + Tailwind CSS로 만든 현대적인 웹 애플리케이션으로, 6개의 클래식 HTML5 게임을 포함한 메뉴 인터페이스입니다.
 
-## 🎮 Games Included
+## 🎮 포함된 게임
 
-- **Pachinko Slot**: Exciting Japanese-style slot machine with jackpot features
-- **Snake**: Classic snake game with obstacles and high scores
-- **Tetris**: Fall into the rhythm with levels, hold, and scoring
-- **Breakout**: Break bricks with paddle and ball
-- **Flappy Bird**: Navigate through pipes without crashing
-- **2048**: Combine numbers to reach 2048
+- **Pachinko Slot**: 잭팟 기능이 있는 일본 스타일 슬롯 머신
+- **Snake**: 장애물과 최고 점수가 있는 클래식 뱀 게임
+- **Tetris**: 레벨, 홀드, 점수 시스템이 있는 테트리스
+- **Breakout**: 패들과 공으로 벽돌을 깨는 게임
+- **Flappy Bird**: 파이프를 피하며 날아다니는 게임
+- **2048**: 숫자를 합쳐 2048에 도달하는 게임
 
-## ✨ Features
+## ✨ 기능
 
-- **Modern UI**: Responsive design with Tailwind CSS
-- **Settings Panel**: Toggle sound effects and dark theme
-- **Persistent Scores**: High scores saved in localStorage
-- **Sound Effects**: Web Audio API integration (can be disabled)
-- **Mobile Friendly**: Works on desktop and mobile devices
-- **Auto-deployment**: Connected to Vercel for continuous deployment
+- **현대적인 UI**: Tailwind CSS로 반응형 디자인
+- **설정 패널**: 소리 효과와 다크 테마 토글
+- **지속적인 점수**: localStorage에 최고 점수 저장
+- **소리 효과**: Web Audio API 통합 (비활성화 가능)
+- **모바일 친화적**: 데스크톱과 모바일에서 작동
+- **자동 배포**: Vercel과 연결된 지속적 배포
 
-## 🚀 Live Demo
+## 🚀 라이브 데모
 
-[View Live Site](https://grok-project-21-3as5sczof-dongyeol-jungs-projects.vercel.app)
+[라이브 사이트 보기](https://grok-project-21-3as5sczof-dongyeol-jungs-projects.vercel.app)
 
-## 🛠️ Tech Stack
+## 🛠️ 기술 스택
 
-- **Frontend**: React 18, React Router DOM
-- **Styling**: Tailwind CSS 3.4
-- **Build Tool**: Vite
-- **Deployment**: Vercel
-- **Games**: HTML5 Canvas, JavaScript ES6+
-- **Audio**: Web Audio API
+- **프론트엔드**: React 18, React Router DOM
+- **스타일링**: Tailwind CSS 3.4
+- **빌드 도구**: Vite
+- **배포**: Vercel
+- **게임**: HTML5 Canvas, JavaScript ES6+
+- **오디오**: Web Audio API
 
-## 📁 Project Structure
+## 📁 프로젝트 구조
 
 ```
 src/
-├── App.jsx          # Main app with routing and settings
-├── main.jsx         # React entry point
-└── index.css        # Tailwind directives
+├── App.jsx          # 라우팅과 설정이 있는 메인 앱
+├── main.jsx         # React 진입점
+└── index.css        # Tailwind 지시문
 
 public/
-├── *.html           # Individual game files
+├── *.html           # 개별 게임 파일
 └── ...
 
-package.json         # Dependencies and scripts
-vite.config.js       # Vite configuration
-tailwind.config.js   # Tailwind configuration
+package.json         # 의존성과 스크립트
+vite.config.js       # Vite 설정
+tailwind.config.js   # Tailwind 설정
 ```
 
-## 🏃‍♂️ Local Development
+## 🏃‍♂️ 로컬 개발
 
-1. Clone the repository:
+1. 저장소 클론:
    ```bash
    git clone https://github.com/mxten777/grok_project_21.git
    cd grok_project_21
    ```
 
-2. Install dependencies:
+2. 의존성 설치:
    ```bash
    npm install
    ```
 
-3. Start development server:
+3. 개발 서버 시작:
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. 브라우저에서 [http://localhost:3000](http://localhost:3000) 열기.
 
-## 📦 Build for Production
+## 📦 프로덕션 빌드
 
 ```bash
 npm run build
 ```
 
-The built files will be in the `dist/` directory.
+빌드된 파일은 `dist/` 디렉터리에 생성됩니다.
 
-## 🎵 Settings
+## 🎵 설정
 
-- **Sound Effects**: Toggle game sounds on/off
-- **Dark Theme**: Switch between light and dark menu themes
+- **소리 효과**: 게임 소리 켜기/끄기
+- **다크 테마**: 메뉴 테마 전환
 
-Settings are saved in your browser's localStorage.
+설정은 브라우저의 localStorage에 저장됩니다.
 
-## 🎯 Game Controls
+## 🎯 게임 조작법
 
 ### Pachinko Slot
-- Click "Start" to spin
-- Adjust bet with +/- buttons
-- Max bet button for maximum stake
-- Auto spin toggle
-- Setting button for difficulty adjustment
+- "Start" 클릭으로 회전
+- +/- 버튼으로 베팅 조절
+- 최대 베팅 버튼
+- 자동 회전 토글
+- 설정 버튼으로 난이도 조절
 
 ### Snake
-- Arrow keys to move
-- Avoid walls and yourself
-- Collect food to grow
+- 화살표 키로 이동
+- 벽과 자신을 피함
+- 먹이를 먹어 성장
 
 ### Tetris
-- Arrow keys: Move and rotate
-- Space: Hard drop
-- C: Hold piece
-- Down arrow: Soft drop
+- 화살표 키: 이동 및 회전
+- 스페이스: 하드 드롭
+- C: 홀드 피스
+- 아래 화살표: 소프트 드롭
 
 ### Breakout
-- Mouse or arrow keys to move paddle
-- Break all bricks to win
+- 마우스나 화살표 키로 패들 이동
+- 모든 벽돌을 깨면 승리
 
 ### Flappy Bird
-- Space or click to flap
-- Avoid pipes
+- 스페이스나 클릭으로 날개짓
+- 파이프 피하기
 
 ### 2048
-- Arrow keys to slide tiles
-- Combine same numbers
-- Reach 2048 to win
+- 화살표 키로 타일 슬라이드
+- 같은 숫자 합치기
+- 2048에 도달하면 승리
 
-## 🤝 Contributing
+## 🤝 기여
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test locally
-5. Commit and push
-6. Create a pull request
+1. 저장소 포크
+2. 기능 브랜치 생성
+3. 변경사항 만들기
+4. 로컬 테스트
+5. 커밋 및 푸시
+6. 풀 리퀘스트 생성
 
-## 📄 License
+## 📄 라이선스
 
-This project is for educational and demonstration purposes.
+이 프로젝트는 교육 및 데몬스트레이션 목적입니다.
 
-## 👨‍💻 Author
+## 👨‍💻 작성자
 
-Built with ❤️ using React and Tailwind CSS.
+React와 Tailwind CSS로 ❤️ 만들어졌습니다.
